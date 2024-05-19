@@ -2,58 +2,57 @@ import { useState, useEffect } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import ProductCard from "./ProductCard";
-import { Grid } from "@mui/material";
+import { Backdrop, Grid } from "@mui/material";
+import productData from "./products.json";
 
+// eslint-disable-next-line react/prop-types
 const ProductList = () => {
-  const [products, setProducts] = useState([
-    {
-      ProductId: "f3b658d4-ca43-4e8a-8278-006f097c73e1",
-      ProductName: "FairnLovely",
-      Quantity: 368,
-      IsActive: true,
-    },
-    {
-      ProductId: "6fcae71a-5f28-4ad9-8eee-007f5864663f",
-      ProductName: "Oppo Mobile",
-      Quantity: 0,
-      IsActive: true,
-    },
-    {
-      ProductId: "50127115-40e7-4c41-b0d1-00f89366c093",
-      ProductName: "Oneplus Nord CE4",
-      Quantity: 0,
-      IsActive: true,
-    },
-    {
-      ProductId: "7e7cfc92-4813-410a-af65-027054b92fa5",
-      ProductName: "vijayhhh",
-      Quantity: 0,
-      IsActive: true,
-    },
-  ]);
-  const [loading, setLoading] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    try {
-      fetch(`https://uiexercise.theproindia.com/api/Product/GetAllProduct`)
-        .then((response) => response.json())
-        .then((data) => {
-          setProducts(data);
-          setLoading(false);
-        });
-    } catch (error) {
-      console.log(error);
-    }
+    //fetchData();
+    const filteredProducts = productData?.filter((product) => {
+      if (product?.Quantity > 0) return product;
+    });
+    setProducts(filteredProducts);
+    setLoading(false);
   }, []);
+
+  // const fetchData = async () => {
+  //   try {
+  //     await fetch(
+  //       `https://uiexercise.theproindia.com/api/Product/GetAllProduct`
+  //     )
+  //       .then((response) => response.json())
+  //       .then((data) => {
+  //         const list = data?.map((product, i) => {
+  //           return {
+  //             ...product,
+  //             productImage: `https://picsum.photos/200/300?random=${i + 1}`,
+  //           };
+  //         });
+  //         setProducts(list);
+  //         setLoading(false);
+  //       });
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   return (
     <>
       {loading ? (
-        <Box sx={{ display: "flex" }}>
-          <CircularProgress />
+        <Box>
+          <Backdrop
+            sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open={loading}
+          >
+            <CircularProgress color="inherit" />
+          </Backdrop>
         </Box>
       ) : (
-        <Grid container spacing={1} paddingTop="20px">
+        <Grid container padding="10px">
           <ProductCard data={products} />
         </Grid>
       )}
